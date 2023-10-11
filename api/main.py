@@ -26,14 +26,28 @@ def hello_world():
 @app.route('/add_comment', methods=['POST'])
 def add_comment():
     try:
-        data = request.get_json()
-        new_comment = Comment(text=data['text'])
+#        data = request.get_json()
+        comment_text = request.form['comment']
+#        new_comment = Comment(text=data['text'])
+        new_comment = Comment(text=comment_text)
         db.session.add(new_comment)
         db.session.commit()
         return jsonify({"message": "Comment added successfully"})
+#        return redirect('/')  # Redirect back to the homepage after submission
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
+
+
+# Define a route to get comments from the database with specific keys
+@app.route('/get_comment', methods=['GET'])
+def get_comment():
+    comment = Comment.query.all()
+    
+    # Create a list of dictionaries with specific keys
+    comment_data = [{'id': comment.id, 'text': comment.text} for comment in comment]
+    
+    return jsonify(comment_data)
 
 # Define the custom port number here
 custom_port = 8080  # Change this to your desired port number
@@ -41,3 +55,4 @@ custom_port = 8080  # Change this to your desired port number
 # Run the web application with the custom port
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=custom_port)
+
