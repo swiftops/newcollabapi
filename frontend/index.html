@@ -9,15 +9,6 @@
     <h1>API Response 1:</h1>
     <p id="api-response-1">Loading...</p>
 
-
-    <!-- Comment Submission Form -->
-    <h1>Submit a Comment:</h1>
-    <form id="comment-form" action="http://localhost:8080/add_comment" method="POST">
-        <label for="comment">Comment:</label>
-        <textarea name="comment" id="comment" rows="4" cols="50" required></textarea><br>
-        <input type="submit" value="Submit Comment">
-    </form>    
-
     <h1>API Response 2 (Table Format):</h1>
     <table id="api-response-2">
         <thead>
@@ -30,67 +21,52 @@
         </tbody>
     </table>
 
-
-
     <script>
         // Define the API endpoint URLs for the two GET requests
         const apiUrl1 = 'http://localhost:8080';
         const apiUrl2 = 'http://localhost:8080/get_comment';
 
-        // Function to fetch and update comments
-        const updateComments = () => {
-            fetch(apiUrl2)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const tableBody = document.getElementById('api-response-2-body');
-                    tableBody.innerHTML = '';
+        // Fetch data from the first API using a GET request
+        fetch(apiUrl1)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Update the HTML content with the API response
+                document.getElementById('api-response-1').textContent = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('api-response-1').textContent = 'Error fetching data';
+            });
 
-                    data.forEach(item => {
-                        const row = tableBody.insertRow();
-                        const cell1 = row.insertCell(0);
-                        const cell2 = row.insertCell(1);
-                        cell1.textContent = item.id;
-                        cell2.textContent = item.text;
-                    });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('api-response-2').textContent = 'Error fetching data';
+        // Fetch data from the second API using a GET request and display it in a table
+        fetch(apiUrl2)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Assuming the data is in JSON format
+            })
+            .then(data => {
+                const tableBody = document.getElementById('api-response-2-body');
+                tableBody.innerHTML = ''; // Clear the table body
+
+                data.forEach(item => {
+                    const row = tableBody.insertRow();
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    cell1.textContent = item.id;
+                    cell2.textContent = item.text;
                 });
-        };
-
-        // Event listener for comment form submission
-        document.getElementById('comment-form').addEventListener('submit', event => {
-            event.preventDefault(); // Prevent the default form submission
-
-            // Fetch data from the first API using a GET request
-            fetch(apiUrl1)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.text();
-                })
-                .then(data => {
-                    // Update the HTML content with the API response
-                    document.getElementById('api-response-1').textContent = data;
-
-                    // Clear and refresh the comment list
-                    updateComments();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('api-response-1').textContent = 'Error fetching data';
-                });
-        });
-
-        // Initial load of comments
-        updateComments();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('api-response-2').textContent = 'Error fetching data';
+            });
     </script>
 </body>
 </html>
