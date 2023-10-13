@@ -26,10 +26,10 @@ def hello_world():
 @app.route('/add_comment', methods=['POST'])
 def add_comment():
     try:
-#        data = request.get_json()
-        comment_text = request.form['comment']
-#        new_comment = Comment(text=data['text'])
-        new_comment = Comment(text=comment_text)
+        data = request.get_json()
+#        comment_text = request.form['comment']
+        new_comment = Comment(text=data['text'])
+#        new_comment = Comment(text=comment_text)
         db.session.add(new_comment)
         db.session.commit()
         return jsonify({"message": "Comment added successfully"})
