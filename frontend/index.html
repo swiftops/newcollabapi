@@ -13,8 +13,8 @@
     <table id="api-response-2">
         <thead>
             <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
+                <th>No</th>
+                <th>Comments</th>
             </tr>
         </thead>
         <tbody id="api-response-2-body">
@@ -79,30 +79,35 @@
             });
 
         // Send a POST request to submit the comment in JSON format
-       fetch(addCommentUrl, {
+        document.getElementById('comment-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const commentInput = document.getElementById('comment').value;
+            const commentData = { comment: commentInput };
+
+            fetch('http://localhost:8080/add_comment', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(commentData), // Send the comment data as JSON
+                body: JSON.stringify(commentData)
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // Clear the input field
-                    document.getElementById('comment').value = '';
-                    // Refresh the comment list
-                    updateComments();
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('api-response-2').textContent = 'Error submitting comment';
-                });
-        
-
-        // Initial load of comments
-        updateComments(); 
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                // Handle the response as needed (e.g., show success message)
+                console.log('Comment submitted successfully');
+                document.getElementById('comment').value = ''; // Clear the input field
+                // Reload the page after a successful submission
+                location.reload();                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle the error (e.g., show an error message)
+            });
+        });
     </script>
 </body>
 </html>
